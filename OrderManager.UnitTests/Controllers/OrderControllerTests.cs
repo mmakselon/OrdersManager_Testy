@@ -55,15 +55,16 @@ namespace OrderManager.UnitTests.Controllers
             var result = _orderController.AddProduct(_product);
 
             result.Should().BeOfType<BadRequestResult>();
-
-
-
         }
 
         [Test]
         public void AddProduct_WhenCalled_ShouldAddProduct()
         {
             Init();
+
+            var result = _orderController.AddProduct(_product);
+
+            _mockOrderService.Verify(x=>x.AddProduct(_userId, _product), Times.Once());
         }
 
         [Test]
