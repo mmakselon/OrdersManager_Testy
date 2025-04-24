@@ -10,6 +10,7 @@ using OrdersManager.UnitTests.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http.Results;
@@ -23,6 +24,7 @@ namespace OrderManager.UnitTests.Controllers
         private OrderController _orderController;
         private string _userId;
         private Product _product;
+        private Exception _exception;
 
         private void Init()
         {
@@ -34,6 +36,7 @@ namespace OrderManager.UnitTests.Controllers
             _orderController.MockCurrentUser(_userId, "1@2.pl");
 
             _product = new Product { OrderId = 1 };
+            _exception = new Exception("1");
         }
 
         [Test]
@@ -81,12 +84,23 @@ namespace OrderManager.UnitTests.Controllers
         public void AddProduct_WhenOrderServiceFails_ShouldLogError()
         {
             Init();
+            _mockOrderService.Setup(x => x.AddProduct(_userId, _product)).Throws(_exception);
+
+            var result = _orderController.AddProduct(_product);
+
+            _mockLogger.Verify(x => x.Error("1"), Times.Once);
         }
 
         [Test]
         public void AddProduct_WhenOrderServiceFails_ShouldReturnBadRequest()
         {
             Init();
+
+            _mockOrderService.Setup(x => x.AddProduct(_userId, _product)).Throws(_exception);
+
+            var result = _orderController.AddProduct(_product);
+
+            result.Should().BeOfType<BadRequestResult>();
         }
     }
 }
