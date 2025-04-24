@@ -71,6 +71,10 @@ namespace OrderManager.UnitTests.Controllers
         public void AddProduct_WhenCalled_ShouldReturnOkReasult()
         {
             Init();
+
+            var result = _orderController.AddProduct(_product);
+
+            result.Should().BeOfType<OkResult>();
         }
 
         [Test]
