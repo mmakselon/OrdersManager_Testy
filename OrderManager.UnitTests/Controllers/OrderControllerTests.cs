@@ -102,5 +102,23 @@ namespace OrderManager.UnitTests.Controllers
 
             result.Should().BeOfType<BadRequestResult>();
         }
+
+        [Test]
+        public void GetOrder_WhenOrderIdIsNull_ShouldReturnBadRequest()
+        {
+            Init();
+
+            var result = _orderController.GetOrder(0);
+            result.Should().BeOfType<BadRequestResult>();
+        }
+
+        [Test]
+        public void GetOrder_WhenOrderIdIsMinus_ShouldReturnBadRequest()
+        {
+            Init();
+
+            var result = _orderController.GetOrder(-1);
+            result.Should().BeOfType<BadRequestResult>();
+        }
     }
 }
