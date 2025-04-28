@@ -126,13 +126,23 @@ namespace OrderManager.UnitTests.Controllers
         }
 
         [Test]
-        public void GetOrder_WhenCalled_ShouldReturnOkReasult()
+        public void GetOrder_WhenCalled_ShouldReturnOkResultWithCorrectOrder()
         {
             Init();
+            var order = new Order { Id = _product.OrderId };
+            _mockOrderService
+                .Setup(x => x.GetOrderWithProducts(_product.OrderId, It.IsAny<string>()))
+                .Returns(order);
 
+            //Act
             var result = _orderController.GetOrder(_product.OrderId);
 
-            result.Should().BeOfType<OkResult>();
+            // Assert
+            result.Should().BeOfType<OkNegotiatedContentResult<Order>>();
+
+            var okResult = result as OkNegotiatedContentResult<Order>;
+            okResult.Content.Should().NotBeNull();
+            okResult.Content.Id.Should().Be(_product.OrderId);
         }
     }
 }
