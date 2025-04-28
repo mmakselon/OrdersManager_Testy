@@ -103,8 +103,11 @@ namespace OrderManager.UnitTests.Controllers
             result.Should().BeOfType<BadRequestResult>();
         }
 
+
+
+
         [Test]
-        public void GetOrder_WhenOrderIdIsNull_ShouldReturnBadRequest()
+        public void GetOrder_WhenOrderIdIsLowerThan1_ShouldReturnBadRequest()
         {
             Init();
 
@@ -113,12 +116,23 @@ namespace OrderManager.UnitTests.Controllers
         }
 
         [Test]
-        public void GetOrder_WhenOrderIdIsMinus_ShouldReturnBadRequest()
+        public void GetOrder_WhenCalled_GetOrder()
         {
             Init();
 
-            var result = _orderController.GetOrder(-1);
-            result.Should().BeOfType<BadRequestResult>();
+            var result = _orderController.GetOrder(_product.OrderId);
+
+            _mockOrderService.Verify(x => x.GetOrderWithProducts(_product.OrderId,_userId), Times.Once());
+        }
+
+        [Test]
+        public void GetOrder_WhenCalled_ShouldReturnOkReasult()
+        {
+            Init();
+
+            var result = _orderController.GetOrder(_product.OrderId);
+
+            result.Should().BeOfType<OkResult>();
         }
     }
 }
