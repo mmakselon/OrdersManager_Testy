@@ -144,5 +144,29 @@ namespace OrderManager.UnitTests.Controllers
             okResult.Content.Should().NotBeNull();
             okResult.Content.Id.Should().Be(_product.OrderId);
         }
+
+        [Test]
+        public void GetOrder_WhenOrderServiceFails_ShouldLogError()
+        {
+            Init();
+            _mockOrderService.Setup(x => x.GetOrderWithProducts(_product.OrderId,
+                _userId)).Throws(_exception);
+
+            var result = _orderController.GetOrder(_product.OrderId);
+
+            _mockLogger.Verify(x => x.Error("1"), Times.Once);
+        }
+
+        [Test]
+        public void GetOrder_WhenOrderServiceFails_ShouldReturnBadRequest()
+        {
+            Init();
+
+            _mockOrderService.Setup(x => x.GetOrderWithProducts(_product.OrderId, _userId)).Throws(_exception);
+
+            var result = _orderController.GetOrder(_product.OrderId);
+
+            result.Should().BeOfType<BadRequestResult>();
+        }
     }
 }
