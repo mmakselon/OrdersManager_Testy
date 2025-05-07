@@ -96,6 +96,28 @@ namespace OrdersManager.UnitTests.Persistence.Services
             _mockUnitOfWork.Verify(x => x.Complete(), Times.Never);
         }
 
+        [Test]
+        public void GetOrderWithProducts_WhenOrderDoesntExists_ShouldThrowAnException()
+        {
+            Init();
+            var _badUserId = "2";
+            _mockUnitOfWork
+                .Setup(x => x.Order.GetOrderWithProducts(_product.OrderId, _badUserId))
+                .Returns((Order)null);
 
+            Action action = () => _orderService.GetOrderWithProducts(_product.OrderId, _badUserId);
+
+            action.Should().ThrowExactly<Exception>().WithMessage("*Order doesn't exists.*");
+        }
+
+        [Test]
+        public void GetOrderWithProducts_WhenCalled_ShouldReturnOrder()
+        {
+            Init();
+
+            var result = _orderService.GetOrderWithProducts(_product.OrderId, _userId);
+
+            result.Should().Be(_order);
+        }
     }
 }

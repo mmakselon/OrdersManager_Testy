@@ -145,6 +145,7 @@
   <ItemGroup>
     <Compile Include="Controllers\OrderControllerTests.cs" />
     <Compile Include="Extensions\ApiControllerExtensions.cs" />
+    <Compile Include="Persistence\Services\OrderServiceTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
