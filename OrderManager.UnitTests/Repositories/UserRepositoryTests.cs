@@ -21,14 +21,18 @@ namespace OrdersManager.UnitTests.Persistence.Repositories
 
         private void Init()
         {
-            _mockUsers = new Mock<DbSet<ApplicationUser>>();
             _users = new List<ApplicationUser>
-            {
-                new ApplicationUser { Id = "1" },
-                new ApplicationUser { Id = "2" },
-                new ApplicationUser { Id = "3" }
-            };
-            _mockUsers.SetSource(_users);
+                {
+                    new ApplicationUser { Id = "1" },
+                    new ApplicationUser { Id = "2" },
+                    new ApplicationUser { Id = "3" }
+                }.AsQueryable();
+
+            _mockUsers = new Mock<DbSet<ApplicationUser>>();
+            _mockUsers.As<IQueryable<ApplicationUser>>().Setup(m => m.Provider).Returns(_users.Provider);
+            _mockUsers.As<IQueryable<ApplicationUser>>().Setup(m => m.Expression).Returns(_users.Expression);
+            _mockUsers.As<IQueryable<ApplicationUser>>().Setup(m => m.ElementType).Returns(_users.ElementType);
+            _mockUsers.As<IQueryable<ApplicationUser>>().Setup(m => m.GetEnumerator()).Returns(_users.GetEnumerator);
 
             _mockContext = new Mock<IApplicationDbContext>();
             _mockContext.Setup(x => x.Users).Returns(_mockUsers.Object);
